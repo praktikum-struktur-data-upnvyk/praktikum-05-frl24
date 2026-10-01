@@ -71,21 +71,78 @@ string display(Stack& s) {
 
 // SOAL 1
 bool push(Stack& s, int nilai) {
-    return false;
+    Node* node_baru = new Node;
+    node_baru->data = nilai;
+    node_baru->next = s.top;
+    s.top = node_baru;
+    return true;
 }
 
 // SOAL 2
 bool pop(Stack& s, int& nilai) {
-    return false;
+    if(isEmpty(s)) {
+        return false;
+    }
+    Node* hapus = s.top;
+    nilai = hapus->data;
+    s.top = s.top->next;
+    delete hapus;
+    return true;
 }
 
 // SOAL 3
 void clear(Stack& s) {
+    while (!isEmpty(s)) {
+        Node* hapus = s.top;
+        s.top = s.top->next;
+        delete hapus;
+    }
 }
 
 // SOAL 4
 bool kurungSeimbang(const string& ekspresi) {
-    return false;
+    Node* top = nullptr;
+
+    for (char karakter : ekspresi) {
+        if (karakter == '(' || karakter == '[' || karakter == '{') {
+            Node* node = new Node{karakter, top};
+            top = node;
+            continue;
+        }
+
+        if (karakter != ')' && karakter != ']' && karakter != '}') {
+            continue;
+        }
+
+        if (top == nullptr) {
+            return false;
+        }
+
+        char pembuka = static_cast<char>(top->data);
+        Node* node = top;
+        top = top->next;
+        delete node;
+
+        bool cocok = (pembuka == '(' && karakter == ')') ||
+                     (pembuka == '[' && karakter == ']') ||
+                     (pembuka == '{' && karakter == '}');
+        if (!cocok) {
+            while (top != nullptr) {
+                node = top;
+                top = top->next;
+                delete node;
+            }
+            return false;
+        }
+    }
+
+    bool seimbang = (top == nullptr);
+    while (top != nullptr) {
+        Node* node = top;
+        top = top->next;
+        delete node;
+    }
+    return seimbang;
 }
 
 // =============================================================================
